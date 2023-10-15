@@ -1,5 +1,5 @@
 // creating server with the help of express
-// require('dotenv').config()
+require('dotenv').config()
 const express= require("express");
 const server=express();
 const productRouter = require('./routes/product')
