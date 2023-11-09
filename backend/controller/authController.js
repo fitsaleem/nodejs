@@ -35,7 +35,7 @@ export const signin = async (req, res, next) => {
     if (!validUser) return next (errorHandler(404,"user not  found"))
 
     const validPassword=bcryptjs.compareSync(password,validUser.password);
-    if (!validPassword) return next(errorHandler(401,"wrong credentials"))
+    if (!validPassword) return next(errorHandler(401,"wrong credentials"));
 
 
   } catch (error) {
