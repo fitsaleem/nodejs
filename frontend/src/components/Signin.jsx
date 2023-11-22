@@ -1,12 +1,36 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
+import  { useState } from "react";
 import { BsEyeSlash } from "react-icons/bs";
+import axios from "axios";
 import "../App.css";
 
 const Signin = () => {
 
-  const handleChange=()=>{
-    console.log("change")
+  const [user, setUser] = useState({});
+  const navigate=useNavigate();
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit= async (e)=>{
+
+     e.preventDefault();
+
+    try {
+      const response = await axios.post("/api/auth/signin", user);
+      console.log("SignIn success", response.data);
+    } catch (error) {
+      console.log("signIn fail", error.message);
+      if (error.response && error.response.status === 400) {
+        console.log("User already exists");
+      } else {
+        console.log("SignIn failed");
+      }
+    } 
+    
+    navigate('/');     //it will redirect to home page if the response will success
+
   }
   return (
     <div>
@@ -39,7 +63,7 @@ const Signin = () => {
                           <p>Please enter your credentials to sign in!</p>
                         </div>
                         <div>
-                          <form action="#">
+                          <form onSubmit={handleSubmit}>
                             <div className="form-container vertical">
                               <div className="form-item vertical">
                                 <label className="form-label mb-2">
@@ -49,10 +73,9 @@ const Signin = () => {
                                   <input
                                     className="input"
                                     type="text"
-                                    name="userName"
+                                    id="username"
                                     autoComplete="off"
                                     placeholder="User Name"
-                                    defaultValue=""
                                     onChange={handleChange}
                                   />
                                 </div>
@@ -66,10 +89,9 @@ const Signin = () => {
                                     <input
                                       className="input pr-8"
                                       type="password"
-                                      name="password"
+                                      id="password"
                                       autoComplete="off"
                                       placeholder="Password"
-                                      defaultValue=""
                                       onChange={handleChange}
                                     />
                                     <div className="input-suffix-start right-0 px-2">
@@ -108,7 +130,7 @@ const Signin = () => {
                               </button>
 
                               <div className="mt-4 text-center">
-                                <span>Don't have an account yet?</span>
+                              <span>Don&apos;t have an account yet?</span>
                                 <Link
                                   to="/regester"
                                   className="text-primary-600 hover:underline"

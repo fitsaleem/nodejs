@@ -25,10 +25,10 @@ export const signup = async (req, res, next) => {
 //res is a data we send back to the clinet side
 // and we use next for handling our middleware
 export const signin = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const validUser = await User.findOne({ email }); //you can also write this {email: email}
+    const validUser = await User.findOne({ username }); //you can also write this {email: email}
 
     //  if(!validUser) return res.status(401).json({message: "Invalid email"})
     if (!validUser) return next(errorHandler(404, "user not  found"));
