@@ -1,37 +1,44 @@
-import { Link ,useNavigate} from "react-router-dom";
-import  { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { BsEyeSlash } from "react-icons/bs";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 import "../App.css";
 
 const Signin = () => {
+  const { loading, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const [user, setUser] = useState({});
-  const navigate=useNavigate();
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit= async (e)=>{
-
-     e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     try {
+      dispatch(signInStart());
       const response = await axios.post("/api/auth/signin", user);
-      console.log("SignIn success", response.data);
-    } catch (error) {
-      console.log("signIn fail", error.message);
-      if (error.response && error.response.status === 400) {
-        console.log("User already exists");
-      } else {
-        console.log("SignIn failed");
+      // const data = await response.json();
+      if (response.success === false) {
+        dispatch(signInFailure(response));
+        return;
       }
-    } 
-    
-    navigate('/');     //it will redirect to home page if the response will success
-
-  }
+      dispatch(signInSuccess(response));
+      navigate("/");
+    } catch (error) {
+      dispatch(signInFailure(error.message));
+    }
+  };
   return (
     <div>
       <div id="root">
@@ -72,6 +79,7 @@ const Signin = () => {
                                 <div>
                                   <input
                                     className="input"
+                                    required
                                     type="text"
                                     id="username"
                                     autoComplete="off"
@@ -93,6 +101,7 @@ const Signin = () => {
                                       autoComplete="off"
                                       placeholder="Password"
                                       onChange={handleChange}
+                                      required
                                     />
                                     <div className="input-suffix-start right-0 px-2">
                                       <span className="cursor-pointer text-xl">
@@ -123,20 +132,25 @@ const Signin = () => {
                               </div>
 
                               <button
+                                disabled={loading}
                                 className="btn btn-solid w-full"
                                 type="submit"
                               >
-                                Sign In
+                                {loading ? "Loading..." : "Sign In"}
                               </button>
 
                               <div className="mt-4 text-center">
-                              <span>Don&apos;t have an account yet?</span>
+                                <span>Don&apos;t have an account yet?</span>
                                 <Link
                                   to="/regester"
                                   className="text-primary-600 hover:underline"
                                 >
                                   Sign up
                                 </Link>
+                                <p className="text-red-700 mt-5">
+                                  {error ? error || "Something went wrong!"
+                                    : ""}
+                                </p>
                               </div>
                             </div>
                           </form>
