@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "learning nodejs",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
