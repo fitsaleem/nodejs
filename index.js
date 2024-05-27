@@ -10,12 +10,18 @@ const mongoose = require('mongoose');
 
 
 //db connection
-main().catch(err => console.log(err));
+
 
 async function main() {
-  await mongoose.connect(process.env.MONGO_URI);
-  console.log('database connected')
+  await mongoose.connect(process.env.MONGO_URI , {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log('Successfully connected to MongoDB.'))
+  .catch(err => console.error('Connection error', err));
 }
+
+main();
 
 // body parser
 server.use(express.json()); //it will read body
